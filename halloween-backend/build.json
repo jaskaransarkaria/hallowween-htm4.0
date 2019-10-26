@@ -1,0 +1,53 @@
+{
+    "interactionModel": {
+        "languageModel": {
+            "invocationName": "trick or treat",
+                "intents": [
+                    {
+                        "name": "AMAZON.CancelIntent",
+                        "samples": []
+                    },
+                    {
+                        "name": "AMAZON.HelpIntent",
+                        "samples": []
+                    },
+                    {
+                        "name": "AMAZON.StopIntent",
+                        "samples": []
+                    },
+                    {
+                        "name": "HelloWorldIntent",
+                        "slots": [],
+                        "samples": [
+                            "hello",
+                            "how are you",
+                            "say hi world",
+                            "say hi",
+                            "hi",
+                            "say hello world",
+                            "say hello"
+                        ]
+                    },
+                    {
+                        "name": "AMAZON.NavigateHomeIntent",
+                        "samples": []
+                    },
+                    {
+                        "name": "numberOfPlayersIntent",
+                        "slots": [
+                            {
+                                "name": "number",
+                                "type": "AMAZON.NUMBER"
+                            }
+                        ],
+                        "samples": [
+                            "there are {number} players",
+                            "{number} players",
+                            "{number}"
+                        ]
+                    }
+                ],
+                    "types": []
+        }
+    }
+}
