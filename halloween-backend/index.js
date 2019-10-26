@@ -70,8 +70,16 @@ const TrickOrTreatIntentHandler = {
         const { numberOfPlayers, currentPlayer, remainingTricksAndTreats } = sessionAttributes
         const trickOrTreat = getTrickOrTreat(remainingTricksAndTreats.tricks, remainingTricksAndTreats.treats);
 
+        if (!trickOrTreat.value) {
+            const speakOutput = `Congratulations you’ve all survived the game with a portion of your soul intact! See in hell...`;
+            return handlerInput
+                .responseBuilder
+                .speak(speakOutput)
+                .getResponse()
+        }
+
         const speakOutput = `${trickOrTreat.type}!! ${trickOrTreat.value}. Do you accept your fate?`
-        if (trickOrTreat.type === "trick") { 
+        if (trickOrTreat.type === "trick") {
             remainingTricksAndTreats.tricks = remainingTricksAndTreats.tricks.filter(elem => elem !== trickOrTreat.value)
         } else {
             remainingTricksAndTreats.treats = remainingTricksAndTreats.treats.filter(elem => elem !== trickOrTreat.value)
