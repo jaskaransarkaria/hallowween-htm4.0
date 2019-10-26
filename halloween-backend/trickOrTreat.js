@@ -1,34 +1,37 @@
-function getTrickOrTreat() {
+const TRICKS = [
+  "run down the street naked",
+  "do a poo in the bin",
+  "eat a banana from the floor with no hands"
+];
+const TREATS = [
+  "heres £30 aws credits",
+  "ive ordered you an ice cream sundae",
+  "free amazon prime for a year!"
+];
+
+function initTrickOrTreat() {
+  return { tricks: TRICKS, treats: TREATS }
+}
+
+function getTrickOrTreat(tricks, treats) {
   const num = Math.random();
 
   if (num > 0.5) {
-    return "Trick!! " + getRandomTrick();
+    return "Trick!! " + getRandomTrick(tricks);
   }
   if (num < 0.5) {
-    return "Treat!! " + getRandomTreat();
+    return "Treat!! " + getRandomTreat(treats);
   }
 }
 
-function getRandomTrick() {
-  const tricks = [
-    "run down the street naked",
-    "do a poo in the bin",
-    "eat a banana from the floor with no hands"
-  ];
-
+function getRandomTrick(tricks) {
   return tricks[Math.floor(Math.random() * tricks.length)];
 }
 
-function getRandomTreat() {
-  const treats = [
-    "heres £30 aws credits",
-    "ive ordered you an ice cream sundae",
-    "free amazon prime for a year!"
-  ];
-
+function getRandomTreat(treats) {
   return treats[Math.floor(Math.random() * treats.length)];
 }
 
 module.exports = {
-  getTrickOrTreat
+  getTrickOrTreat, initTrickOrTreat
 };

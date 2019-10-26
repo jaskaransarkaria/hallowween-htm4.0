@@ -2,7 +2,7 @@
 // Please visit https://alexa.design/cookbook for additional examples on implementing slots, dialog management,
 // session persistence, api calls, and more.
 const Alexa = require("ask-sdk-core");
-const { getTrickOrTreat } = require("./trickOrTreat.js");
+const { getTrickOrTreat, initTrickOrTreat } = require("./trickOrTreat.js");
 const maxNumberOfShards = 2;
 
 const LaunchRequestHandler = {
@@ -34,7 +34,7 @@ const NumberOfPlayerIntentHandler = {
 
         const slot = Alexa.getSlotValue(handlerInput.requestEnvelope, 'number')
 
-                // const speakOutput = `Prepare for a fright. <audio src="soundbank://soundlibrary/monsters/pigmy_bats/pigmy_bats_09"/> There is no turning back.`;
+        // const speakOutput = `Prepare for a fright. <audio src="soundbank://soundlibrary/monsters/pigmy_bats/pigmy_bats_09"/> There is no turning back.`;
 
         const speakOutput = `ok, lets begin.`;
         const playerShardsRemaining = [];
@@ -46,7 +46,8 @@ const NumberOfPlayerIntentHandler = {
         Object.assign(sessionAttributes, {
             numberOfPlayers: slot,
             currentPlayer: 1,
-            playerShardsRemaining
+            playerShardsRemaining,
+            remainingTricksAndTreats: initTrickOrTreat()
         });
 
         handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
@@ -66,8 +67,8 @@ const TrickOrTreatIntentHandler = {
     },
     handle(handlerInput) {
         const sessionAttributes = handlerInput.attributesManager.getSessionAttributes()
-        const { numberOfPlayers, currentPlayer } = sessionAttributes
-        const trickOrTreat = getTrickOrTreat();
+        const { numberOfPlayers, currentPlayer, remainingTricksAndTreats } = sessionAttributes
+        const trickOrTreat = getTrickOrTreat(remainingTricksAndTreats.tricks, remainingTricksAndTreats.treats);
         const speakOutput = `${trickOrTreat}. Do you accept your fate?`
 
         return handlerInput
@@ -87,13 +88,13 @@ const AcceptFateIntentHandler = {
     handle(handlerInput) {
         const sessionAttributes = handlerInput.attributesManager.getSessionAttributes()
         const { numberOfPlayers, currentPlayer, playerShardsRemaining } = sessionAttributes
-        
+
         sessionAttributes.currentPlayer = (currentPlayer < numberOfPlayers) ? currentPlayer + 1 : 1;
 
         const remaining = playerShardsRemaining[currentPlayer - 1];
         const speakOutput = `Excellent! You have ${remaining} soul shards remaining. Player ${sessionAttributes.currentPlayer} I am waiting for you lurker.`
         handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
-        
+
         return handlerInput
             .responseBuilder
             .speak(speakOutput)
@@ -116,7 +117,7 @@ const DeclineFateIntentHandler = {
 
         if (newRemainingShards > 0) {
             sessionAttributes.currentPlayer = (currentPlayer < numberOfPlayers) ? currentPlayer + 1 : 1;
-            
+
             sessionAttributes.playerShardsRemaining[index] = newRemainingShards;
 
             const speakOutput = `You’ve lost a crucial part of your soul, you only have ${newRemainingShards} shards left before your doom! Player ${sessionAttributes.currentPlayer} tell me if you are ready.`
@@ -128,12 +129,12 @@ const DeclineFateIntentHandler = {
                 .reprompt('testing reprompt')
                 .getResponse()
         }
-        
+
         const speakOutput = `You’ve lost your soul, you are doomed for all eternity. You've ended the game, I'm sure your friends are very proud of you.`;
         return handlerInput
-                .responseBuilder
-                .speak(speakOutput)
-                .getResponse()
+            .responseBuilder
+            .speak(speakOutput)
+            .getResponse()
     }
 }
 
