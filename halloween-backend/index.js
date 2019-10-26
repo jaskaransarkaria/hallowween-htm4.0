@@ -69,7 +69,14 @@ const TrickOrTreatIntentHandler = {
         const sessionAttributes = handlerInput.attributesManager.getSessionAttributes()
         const { numberOfPlayers, currentPlayer, remainingTricksAndTreats } = sessionAttributes
         const trickOrTreat = getTrickOrTreat(remainingTricksAndTreats.tricks, remainingTricksAndTreats.treats);
-        const speakOutput = `${trickOrTreat}. Do you accept your fate?`
+
+        const speakOutput = `${trickOrTreat.type}!! ${trickOrTreat.value}. Do you accept your fate?`
+        if (trickOrTreat.type === "trick") { 
+            remainingTricksAndTreats.tricks = remainingTricksAndTreats.tricks.filter(elem => elem !== trickOrTreat.value)
+        } else {
+            remainingTricksAndTreats.treats = remainingTricksAndTreats.treats.filter(elem => elem !== trickOrTreat.value)
+        }
+        handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
 
         return handlerInput
             .responseBuilder

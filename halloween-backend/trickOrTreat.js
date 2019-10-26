@@ -17,10 +17,16 @@ function getTrickOrTreat(tricks, treats) {
   const num = Math.random();
 
   if (num > 0.5) {
-    return "Trick!! " + getRandomTrick(tricks);
+    return {
+      value: getRandomTrick(tricks),
+      type: "trick"
+    };
   }
   if (num < 0.5) {
-    return "Treat!! " + getRandomTreat(treats);
+    return {
+      value: getRandomTreat(treats),
+      type: "treat"
+    }
   }
 }
 
