@@ -3,6 +3,7 @@
 // session persistence, api calls, and more.
 const Alexa = require("ask-sdk-core");
 const { getTrickOrTreat } = require("./trickOrTreat.js");
+const maxNumberOfShards = 2;
 
 const LaunchRequestHandler = {
     canHandle(handlerInput) {
@@ -34,11 +35,16 @@ const NumberOfPlayerIntentHandler = {
         const slot = Alexa.getSlotValue(handlerInput.requestEnvelope, 'number')
 
         const speakOutput = `ok, lets begin.`;
+        const playerShardsRemaining = [];
+        for (let i = 0; i < slot; i++) {
+            playerShardsRemaining.push(maxNumberOfShards);
+        }
 
         const sessionAttributes = {};
         Object.assign(sessionAttributes, {
             numberOfPlayers: slot,
-            currentPlayer: 1
+            currentPlayer: 1,
+            playerShardsRemaining
         });
 
         handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
@@ -60,15 +66,71 @@ const TrickOrTreatIntentHandler = {
         const sessionAttributes = handlerInput.attributesManager.getSessionAttributes()
         const { numberOfPlayers, currentPlayer } = sessionAttributes
         const trickOrTreat = getTrickOrTreat();
-        sessionAttributes.currentPlayer = (currentPlayer < numberOfPlayers) ? currentPlayer + 1 : 1;
-        const speakOutput = `${trickOrTreat}. Player ${sessionAttributes.currentPlayer} tell me if you are ready.`
-        handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
+        const speakOutput = `${trickOrTreat}. Do you accept your fate?`
 
         return handlerInput
             .responseBuilder
             .speak(speakOutput)
             .reprompt('testing reprompt')
             .getResponse()
+    }
+}
+
+const AcceptFateIntentHandler = {
+    canHandle(handlerInput) {
+        return (Alexa.getRequestType(handlerInput.requestEnvelope) === "IntentRequest" &&
+            Alexa.getIntentName(handlerInput.requestEnvelope) === 'AcceptFateIntent'
+        )
+    },
+    handle(handlerInput) {
+        const sessionAttributes = handlerInput.attributesManager.getSessionAttributes()
+        const { numberOfPlayers, currentPlayer, playerShardsRemaining } = sessionAttributes
+        
+        sessionAttributes.currentPlayer = (currentPlayer < numberOfPlayers) ? currentPlayer + 1 : 1;
+        const remaining = playerShardsRemaining[currentPlayer - 1];
+        const speakOutput = `Excellent! You have ${remaining} soul shards remaining. Player ${sessionAttributes.currentPlayer} tell me if you are ready.`
+        handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
+        
+        return handlerInput
+            .responseBuilder
+            .speak(speakOutput)
+            .reprompt('testing reprompt')
+            .getResponse()
+    }
+}
+
+const DeclineFateIntentHandler = {
+    canHandle(handlerInput) {
+        return (Alexa.getRequestType(handlerInput.requestEnvelope) === "IntentRequest" &&
+            Alexa.getIntentName(handlerInput.requestEnvelope) === 'DeclineFateIntent'
+        )
+    },
+    handle(handlerInput) {
+        const sessionAttributes = handlerInput.attributesManager.getSessionAttributes()
+        const { numberOfPlayers, currentPlayer, playerShardsRemaining } = sessionAttributes
+        const index = currentPlayer - 1;
+        const newRemainingShards = playerShardsRemaining[index] - 1;
+
+        if (newRemainingShards > 0) {
+            sessionAttributes.currentPlayer = (currentPlayer < numberOfPlayers) ? currentPlayer + 1 : 1;
+            
+            sessionAttributes.playerShardsRemaining[index] = newRemainingShards;
+
+            const speakOutput = `You’ve lost a crucial part of your soul, you only have ${newRemainingShards} shards left before your doom! Player ${sessionAttributes.currentPlayer} tell me if you are ready.`
+            handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
+
+            return handlerInput
+                .responseBuilder
+                .speak(speakOutput)
+                .reprompt('testing reprompt')
+                .getResponse()
+        }
+        
+        const speakOutput = `You’ve lost your soul, you are doomed for all eternity. You've ended the game, I'm sure your friends are very proud of you.`;
+        return handlerInput
+                .responseBuilder
+                .speak(speakOutput)
+                .getResponse()
     }
 }
 
@@ -168,6 +230,8 @@ exports.handler = Alexa.SkillBuilders.custom()
         LaunchRequestHandler,
         NumberOfPlayerIntentHandler,
         TrickOrTreatIntentHandler,
+        AcceptFateIntentHandler,
+        DeclineFateIntentHandler,
         HelpIntentHandler,
         CancelAndStopIntentHandler,
         SessionEndedRequestHandler,
