@@ -11,7 +11,8 @@ const LaunchRequestHandler = {
         );
     },
     handle(handlerInput) {
-        const speakOutput = `Welcome to trick or treat. <audio src="soundbank://soundlibrary/human/amzn_sfx_laughter_giggle_01"/> How many players are entering the death zone?`;
+        // const speakOutput = `Welcome to trick or treat. <audio src="soundbank://soundlibrary/human/amzn_sfx_laughter_giggle_01"/> How many players are entering the death zone?`;
+        const speakOutput = 'yo!'
         return (
             handlerInput.responseBuilder
                 .speak(speakOutput)
@@ -29,11 +30,14 @@ const NumberOfPlayerIntentHandler = {
         );
     },
     handle(handlerInput) {
-        const speakOutput = "Testing?";
 
+        const slot = Alexa.getSlotValue(handlerInput.requestEnvelope, 'number')
+
+        const speakOutput = `testing ${slot}`;
+        //handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
         return handlerInput.responseBuilder
             .speak(speakOutput)
-            .reprompt(speakOutput)
+            .reprompt()
             .getResponse();
     }
 };
@@ -50,7 +54,7 @@ const HelpIntentHandler = {
 
         return handlerInput.responseBuilder
             .speak(speakOutput)
-            .reprompt(speakOutput)
+            .reprompt('please try again')
             .getResponse();
     }
 };
