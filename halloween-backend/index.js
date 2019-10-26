@@ -33,14 +33,44 @@ const NumberOfPlayerIntentHandler = {
 
         const slot = Alexa.getSlotValue(handlerInput.requestEnvelope, 'number')
 
-        const speakOutput = `testing ${slot}`;
-        //handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
+        const speakOutput = `ok, lets begin.`;
+
+        const sessionAttributes = {};
+        Object.assign(sessionAttributes, {
+            numberOfPlayers: slot,
+            currentPlayer: 1
+        });
+
+        handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
         return handlerInput.responseBuilder
             .speak(speakOutput)
-            .reprompt()
+            .reprompt("Give me an answer")
             .getResponse();
     }
 };
+
+const TrickOrTreatIntentHandler = {
+
+    canHandle(handlerInput) {
+        return (Alexa.getRequestType(handlerInput.requestEnvelope) === "IntentRequest" &&
+            Alexa.getIntentName(handlerInput.requestEnvelope) === 'trickOrTreatIntent'
+        )
+    },
+    handle(handlerInput) {
+        const sessionAttributes = handlerInput.attributesManager.getSessionAttributes()
+        const { numberOfPlayers, currentPlayer } = sessionAttributes
+        const trickOrTreat = getTrickOrTreat();
+        sessionAttributes.currentPlayer = (currentPlayer < numberOfPlayers) ? currentPlayer + 1 : 1;
+        const speakOutput = `${trickOrTreat}. Player ${sessionAttributes.currentPlayer} tell me if you are ready.`
+        handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
+
+        return handlerInput
+            .responseBuilder
+            .speak(speakOutput)
+            .reprompt('testing reprompt')
+            .getResponse()
+    }
+}
 
 const HelpIntentHandler = {
     canHandle(handlerInput) {
@@ -135,8 +165,9 @@ const ErrorHandler = {
 // defined are included below. The order matters - they're processed top to bottom.
 exports.handler = Alexa.SkillBuilders.custom()
     .addRequestHandlers(
-        NumberOfPlayerIntentHandler,
         LaunchRequestHandler,
+        NumberOfPlayerIntentHandler,
+        TrickOrTreatIntentHandler,
         HelpIntentHandler,
         CancelAndStopIntentHandler,
         SessionEndedRequestHandler,

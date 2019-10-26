@@ -2,52 +2,78 @@
     "interactionModel": {
         "languageModel": {
             "invocationName": "trick or treat",
-                "intents": [
-                    {
-                        "name": "AMAZON.CancelIntent",
-                        "samples": []
-                    },
-                    {
-                        "name": "AMAZON.HelpIntent",
-                        "samples": []
-                    },
-                    {
-                        "name": "AMAZON.StopIntent",
-                        "samples": []
-                    },
-                    {
-                        "name": "HelloWorldIntent",
-                        "slots": [],
-                        "samples": [
-                            "hello",
-                            "how are you",
-                            "say hi world",
-                            "say hi",
-                            "hi",
-                            "say hello world",
-                            "say hello"
-                        ]
-                    },
-                    {
-                        "name": "AMAZON.NavigateHomeIntent",
-                        "samples": []
-                    },
-                    {
-                        "name": "numberOfPlayersIntent",
-                        "slots": [
-                            {
-                                "name": "number",
-                                "type": "AMAZON.NUMBER"
+            "intents": [
+                {
+                    "name": "AMAZON.CancelIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.HelpIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.StopIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.NavigateHomeIntent",
+                    "samples": []
+                },
+                {
+                    "name": "numberOfPlayersIntent",
+                    "slots": [
+                        {
+                            "name": "number",
+                            "type": "AMAZON.NUMBER"
+                        }
+                    ],
+                    "samples": [
+                        "there are {number} players",
+                        "{number} players",
+                        "{number}"
+                    ]
+                },
+                {
+                    "name": "trickOrTreatIntent",
+                    "slots": [],
+                    "samples": [
+                        "trick or treat"
+                    ]
+                }
+            ],
+            "types": []
+        },
+        "dialog": {
+            "intents": [
+                {
+                    "name": "numberOfPlayersIntent",
+                    "confirmationRequired": false,
+                    "prompts": {},
+                    "slots": [
+                        {
+                            "name": "number",
+                            "type": "AMAZON.NUMBER",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.1407429926667.234161644891"
                             }
-                        ],
-                        "samples": [
-                            "there are {number} players",
-                            "{number} players",
-                            "{number}"
-                        ]
+                        }
+                    ]
+                }
+            ],
+            "delegationStrategy": "ALWAYS"
+        },
+        "prompts": [
+            {
+                "id": "Elicit.Slot.1407429926667.234161644891",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "Please say how many players"
                     }
-                ],
-                    "types": []
-        }
+                ]
+            }
+        ]
     }
 }
