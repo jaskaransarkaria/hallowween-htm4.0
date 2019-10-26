@@ -11,15 +11,33 @@ const LaunchRequestHandler = {
         );
     },
     handle(handlerInput) {
-        const speakOutput = `welcome to trick or treat, will it be a trick or a treat? Mwa ha ha. ${getTrickOrTreat()}`;
+        const speakOutput = `Welcome to trick or treat. <audio src="soundbank://soundlibrary/human/amzn_sfx_laughter_giggle_01"/> How many players are entering the death zone?`;
         return (
             handlerInput.responseBuilder
                 .speak(speakOutput)
-                // .reprompt(speakOutput)
+                .withShouldEndSession(false)
+                //.reprompt(speakOutput)
                 .getResponse()
         );
     }
 };
+const NumberOfPlayerIntentHandler = {
+    canHandle(handlerInput) {
+        return (
+            Alexa.getRequestType(handlerInput.requestEnvelope) === "IntentRequest" &&
+            Alexa.getIntentName(handlerInput.requestEnvelope) === "numberOfPlayersIntent"
+        );
+    },
+    handle(handlerInput) {
+        const speakOutput = "Testing?";
+
+        return handlerInput.responseBuilder
+            .speak(speakOutput)
+            .reprompt(speakOutput)
+            .getResponse();
+    }
+};
+
 const HelpIntentHandler = {
     canHandle(handlerInput) {
         return (
@@ -59,8 +77,11 @@ const SessionEndedRequestHandler = {
         );
     },
     handle(handlerInput) {
-        // Any cleanup logic goes here.
-        return handlerInput.responseBuilder.getResponse();
+        // Any cleanup logic goes here
+        return handlerInput
+            .responseBuilder
+            .speak('Goodbye')
+            .getResponse();
     }
 };
 
@@ -110,6 +131,7 @@ const ErrorHandler = {
 // defined are included below. The order matters - they're processed top to bottom.
 exports.handler = Alexa.SkillBuilders.custom()
     .addRequestHandlers(
+        NumberOfPlayerIntentHandler,
         LaunchRequestHandler,
         HelpIntentHandler,
         CancelAndStopIntentHandler,
