@@ -39,6 +39,22 @@
                     "samples": [
                         "trick or treat"
                     ]
+                },
+                {
+                    "name": "AcceptFateIntent",
+                    "slots": [],
+                    "samples": [
+                        "Yes",
+                        "I accept my fate"
+                    ]
+                },
+                {
+                    "name": "DeclineFateIntent",
+                    "slots": [],
+                    "samples": [
+                        "No",
+                        "I beg for mercy"
+                    ]
                 }
             ],
             "types": []
