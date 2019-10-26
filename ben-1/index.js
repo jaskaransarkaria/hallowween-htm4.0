@@ -11,7 +11,7 @@ const LaunchRequestHandler = {
     );
   },
   handle(handlerInput) {
-    const speakOutput = `welcone to trick or treat, will it be a trick or a treat? Mwa ha ha. ${getTrickOrTreat()}`;
+    const speakOutput = `welcome to trick or treat, will it be a trick or a treat? Mwa ha ha. ${getTrickOrTreat()}`;
     return (
       handlerInput.responseBuilder
         .speak(speakOutput)
@@ -111,7 +111,6 @@ const ErrorHandler = {
 exports.handler = Alexa.SkillBuilders.custom()
   .addRequestHandlers(
     LaunchRequestHandler,
-    HelloWorldIntentHandler,
     HelpIntentHandler,
     CancelAndStopIntentHandler,
     SessionEndedRequestHandler,

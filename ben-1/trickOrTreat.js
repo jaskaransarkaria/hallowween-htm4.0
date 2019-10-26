@@ -22,11 +22,11 @@ function getRandomTrick() {
 function getRandomTreat() {
   const treats = [
     "heres £30 aws credits",
-    "ive ordered you an ice cream sunday",
+    "ive ordered you an ice cream sundae",
     "free amazon prime for a year!"
   ];
 
-  return tricks[Math.floor(Math.random() * tricks.length)];
+  return treats[Math.floor(Math.random() * treats.length)];
 }
 
 module.exports = {
