@@ -11,8 +11,8 @@ const LaunchRequestHandler = {
         );
     },
     handle(handlerInput) {
-        // const speakOutput = `Welcome to trick or treat. <audio src="soundbank://soundlibrary/human/amzn_sfx_laughter_giggle_01"/> How many players are entering the death zone?`;
-        const speakOutput = 'yo!'
+        // const speakOutput = `Welcome to trick or treat. <audio src="soundbank://soundlibrary/human/amzn_sfx_laughter_giggle_01"/> How many players are entering the spook zone?`;
+        const speakOutput = 'yo'
         return (
             handlerInput.responseBuilder
                 .speak(speakOutput)
@@ -32,8 +32,8 @@ const NumberOfPlayerIntentHandler = {
     handle(handlerInput) {
 
         const slot = Alexa.getSlotValue(handlerInput.requestEnvelope, 'number')
-
-        const speakOutput = `ok, lets begin.`;
+        // const speakOutput = `Prepare for a fright. <audio src="soundbank://soundlibrary/monsters/pigmy_bats/pigmy_bats_09"/> There is no turning back.`;
+        const speakOutput = `ok, let's begin.`;
 
         const sessionAttributes = {};
         Object.assign(sessionAttributes, {
@@ -44,7 +44,7 @@ const NumberOfPlayerIntentHandler = {
         handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
         return handlerInput.responseBuilder
             .speak(speakOutput)
-            .reprompt("Give me an answer")
+            .reprompt("I'll ask you again: how many players?")
             .getResponse();
     }
 };
@@ -61,13 +61,13 @@ const TrickOrTreatIntentHandler = {
         const { numberOfPlayers, currentPlayer } = sessionAttributes
         const trickOrTreat = getTrickOrTreat();
         sessionAttributes.currentPlayer = (currentPlayer < numberOfPlayers) ? currentPlayer + 1 : 1;
-        const speakOutput = `${trickOrTreat}. Player ${sessionAttributes.currentPlayer} tell me if you are ready.`
+        const speakOutput = `${trickOrTreat}. Player ${sessionAttributes.currentPlayer} I am waiting for you lurker.`
         handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
 
         return handlerInput
             .responseBuilder
             .speak(speakOutput)
-            .reprompt('testing reprompt')
+            .reprompt(speakOutput)
             .getResponse()
     }
 }
@@ -99,7 +99,7 @@ const CancelAndStopIntentHandler = {
         );
     },
     handle(handlerInput) {
-        const speakOutput = "Goodbye!";
+        const speakOutput = "Happy Halloween!";
         return handlerInput.responseBuilder.speak(speakOutput).getResponse();
     }
 };
@@ -114,7 +114,7 @@ const SessionEndedRequestHandler = {
         // Any cleanup logic goes here
         return handlerInput
             .responseBuilder
-            .speak('Goodbye')
+            .speak('Happy Halloween')
             .getResponse();
     }
 };
@@ -151,7 +151,7 @@ const ErrorHandler = {
     },
     handle(handlerInput, error) {
         console.log(`~~~~ Error handled: ${error.stack}`);
-        const speakOutput = `Sorry, I had trouble doing what you asked. Please try again.`;
+        const speakOutput = `It's Halloween, pumpkin head, speak up. I need to hear you clear and loud`;
 
         return handlerInput.responseBuilder
             .speak(speakOutput)
