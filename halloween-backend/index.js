@@ -29,11 +29,11 @@ function getData() {
     })
 }
 
-async function textEndGame(textMessage) {
+async function textEndGame(textMessage, numberTo) {
     try {
         await client.messages.create({
         body: textMessage,
-        to: '+447982720301',  // Text this number
+        to: numberTo,  // Text this number
         from: '+12013350841' // From a valid Twilio number
         })
     } catch (e) {
@@ -110,7 +110,7 @@ const TrickOrTreatIntentHandler = {
 
         if (!trickOrTreat.value) {
             const speakOutput = `I've run out of tricks. Congratulations you’ve all survived the game with a portion of your soul intact! See you in hell...`;
-            await textEndGame(`I'll get you next time`);
+            // await textEndGame(`I'll get you next time`);
             return handlerInput
                 .responseBuilder
                 .speak(speakOutput)
@@ -147,8 +147,9 @@ const AcceptFateIntentHandler = {
 
         sessionAttributes.currentPlayer = (currentPlayer < numberOfPlayers) ? currentPlayer + 1 : 1;
 
-        const remaining = playerShardsRemaining[currentPlayer - 1];
-        const speakOutput = `Excellent! You have ${remaining} soul shards remaining. Player ${sessionAttributes.currentPlayer} I am waiting for you lurker.`
+        const remaining = playerShardsRemaining[sessionAttributes.currentPlayer - 1];
+        const playerName = sessionAttributes.playerList[sessionAttributes.currentPlayer - 1].name;
+        const speakOutput = `Excellent! You have ${remaining} soul shards remaining. ${playerName} I am waiting for you, lurker.`
         handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
 
         return handlerInput
@@ -176,8 +177,8 @@ const DeclineFateIntentHandler = {
 
             sessionAttributes.playerShardsRemaining[index] = newRemainingShards;
             const currentPlayerIndex = sessionAttributes.currentPlayer - 1
-            const data = await getData();
-            const playerName = data.players[currentPlayerIndex].name;
+        
+            const playerName = sessionAttributes.playerList[currentPlayerIndex].name;
             const speakOutput = `You’ve lost a crucial part of your soul, you only have ${newRemainingShards} shards left before your doom! ${playerName} tell me if you are ready.`
             handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
             
@@ -189,7 +190,7 @@ const DeclineFateIntentHandler = {
         }
 
         const speakOutput = `You’ve lost your soul, you are doomed for all eternity. You've ended the game, I'm sure your friends are very proud of you.`;
-        await textEndGame('Muaahahaha you are done.');
+        await textEndGame('Muaahahaha you are done.', sessionAttributes.playerList[index].number);
         return handlerInput
             .responseBuilder
             .speak(speakOutput)
