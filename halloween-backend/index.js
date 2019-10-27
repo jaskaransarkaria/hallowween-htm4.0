@@ -71,7 +71,6 @@ const NumberOfPlayerIntentHandler = {
 
         const slot = Alexa.getSlotValue(handlerInput.requestEnvelope, 'number')
 
-        const speakOutput = `Fools! Prepare for a fearful night. <audio src="soundbank://soundlibrary/monsters/pigmy_bats/pigmy_bats_09"/> There is no turning back now. To find out your fate, say “Trick or treat”. Player 1 let me know when you're ready.`;
         const playerShardsRemaining = [];
         for (let i = 0; i < slot; i++) {
             playerShardsRemaining.push(maxNumberOfShards);
@@ -82,8 +81,12 @@ const NumberOfPlayerIntentHandler = {
             numberOfPlayers: slot,
             currentPlayer: 1,
             playerShardsRemaining,
-            remainingTricksAndTreats: data.tricksAndTreats
+            remainingTricksAndTreats: data.tricksAndTreats,
+            playerList: data.players
         });
+        
+        const playerName = data.players[0].name;
+        const speakOutput = `Fools! Prepare for a fearful night. <audio src="soundbank://soundlibrary/monsters/pigmy_bats/pigmy_bats_09"/> There is no turning back now. To find out your fate, say “Trick or treat”. ${playerName} let me know when you're ready.`;
 
         handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
         return handlerInput.responseBuilder
@@ -172,8 +175,10 @@ const DeclineFateIntentHandler = {
             sessionAttributes.currentPlayer = (currentPlayer < numberOfPlayers) ? currentPlayer + 1 : 1;
 
             sessionAttributes.playerShardsRemaining[index] = newRemainingShards;
-
-            const speakOutput = `You’ve lost a crucial part of your soul, you only have ${newRemainingShards} shards left before your doom! Player ${sessionAttributes.currentPlayer} tell me if you are ready.`
+            const currentPlayerIndex = sessionAttributes.currentPlayer - 1
+            const data = await getData();
+            const playerName = data.players[currentPlayerIndex].name;
+            const speakOutput = `You’ve lost a crucial part of your soul, you only have ${newRemainingShards} shards left before your doom! ${playerName} tell me if you are ready.`
             handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
             
             return handlerInput
