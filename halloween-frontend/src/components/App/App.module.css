@@ -1,0 +1,48 @@
+.mainContainer {
+  text-align: center;
+  min-height: 100vh;
+  background-color: orange;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  font-family: "Titillium Web", sans-serif;
+}
+
+ul {
+  /* list-style: none; */
+  text-align: left;
+}
+h1 {
+  font-family: "Ruge Boogie", cursive;
+  font-size: 5em;
+  margin-bottom: 0;
+  margin-top: 20px;
+}
+.header {
+  height: 100vh;
+  background-color: rgba(235, 200, 4, 0.927);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-image: url("http://res.freestockphotos.biz/pictures/12/12090-illustration-of-a-jack-o-lantern-pv.png");
+}
+
+.landingHeader {
+  font-size: 7em;
+}
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+button,
+input,
+select {
+  background-color: rgb(255, 225, 0);
+  padding: 1em;
+  border-radius: 1em;
+  font-size: 1em;
+}
