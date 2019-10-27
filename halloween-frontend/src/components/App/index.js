@@ -31,7 +31,7 @@ setTrickOrTreat('trick')
       <button onClick={addPlayer}>add player</button>
 
       <ul>
-      {players.map(({name,number})=> <li>{name}- {number}</li>)}
+      {players.map(({name,number},i)=> <li key={i}>{name}- {number}</li>)}
       </ul>
 
       <h1>tricks and treats</h1>
@@ -41,7 +41,7 @@ setTrickOrTreat('trick')
         <option value='treats'>treat</option>
       </select>
       <ul>
-        {tricksAndTreatsArray.map(item=> <li>{item}</li>)}
+        {tricksAndTreatsArray.map((item,i)=> <li key={i}>{item}</li>)}
       </ul>
       <button onClick={addTrickOrTreat}>+ trick or treat</button>
 
