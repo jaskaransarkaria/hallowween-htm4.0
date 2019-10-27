@@ -2,10 +2,17 @@
 // Please visit https://alexa.design/cookbook for additional examples on implementing slots, dialog management,
 // session persistence, api calls, and more.
 const Alexa = require("ask-sdk-core");
-var AWS = require('aws-sdk');
+const AWS = require('aws-sdk');
+const twilio = require('twilio');
+
 var s3 = new AWS.S3();
 const { getTrickOrTreat } = require("./trickOrTreat.js");
 const maxNumberOfShards = 2;
+
+const accountSid = 'AC32c292e39bff41c75080e84fe200450f'; // Your Account SID from www.twilio.com/console
+const authToken = '54bc45973cdbe4b66d4b2450df73958f';   // Your Auth Token from www.twilio.com/console
+const client = new twilio(accountSid, authToken);
+
 
 function getData() {
     return new Promise((resolve, reject) => {
@@ -22,13 +29,25 @@ function getData() {
     })
 }
 
+async function textEndGame(textMessage) {
+    try {
+        await client.messages.create({
+        body: textMessage,
+        to: '+447982720301',  // Text this number
+        from: '+12013350841' // From a valid Twilio number
+        })
+    } catch (e) {
+        console.log('error', e);
+    }
+}
+
 const LaunchRequestHandler = {
     canHandle(handlerInput) {
         return (
             Alexa.getRequestType(handlerInput.requestEnvelope) === "LaunchRequest"
         );
     },
-    handle(handlerInput) {
+   async handle(handlerInput) {
         const speakOutput = `Welcome to trick or treat. <audio src="soundbank://soundlibrary/human/amzn_sfx_laughter_giggle_01"/> How many players are entering the spook zone?`;
         //const speakOutput = `yo`
         
@@ -81,13 +100,14 @@ const TrickOrTreatIntentHandler = {
             Alexa.getIntentName(handlerInput.requestEnvelope) === 'trickOrTreatIntent'
         )
     },
-    handle(handlerInput) {
+    async handle(handlerInput) {
         const sessionAttributes = handlerInput.attributesManager.getSessionAttributes()
         const { numberOfPlayers, currentPlayer, remainingTricksAndTreats } = sessionAttributes
         const trickOrTreat = getTrickOrTreat(remainingTricksAndTreats.tricks, remainingTricksAndTreats.treats);
 
         if (!trickOrTreat.value) {
             const speakOutput = `I've run out of tricks. Congratulations you’ve all survived the game with a portion of your soul intact! See you in hell...`;
+            await textEndGame(`I'll get you next time`);
             return handlerInput
                 .responseBuilder
                 .speak(speakOutput)
@@ -142,7 +162,7 @@ const DeclineFateIntentHandler = {
             Alexa.getIntentName(handlerInput.requestEnvelope) === 'DeclineFateIntent'
         )
     },
-    handle(handlerInput) {
+    async handle(handlerInput) {
         const sessionAttributes = handlerInput.attributesManager.getSessionAttributes()
         const { numberOfPlayers, currentPlayer, playerShardsRemaining } = sessionAttributes
         const index = currentPlayer - 1;
@@ -155,7 +175,7 @@ const DeclineFateIntentHandler = {
 
             const speakOutput = `You’ve lost a crucial part of your soul, you only have ${newRemainingShards} shards left before your doom! Player ${sessionAttributes.currentPlayer} tell me if you are ready.`
             handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
-
+            
             return handlerInput
                 .responseBuilder
                 .speak(speakOutput)
@@ -164,6 +184,7 @@ const DeclineFateIntentHandler = {
         }
 
         const speakOutput = `You’ve lost your soul, you are doomed for all eternity. You've ended the game, I'm sure your friends are very proud of you.`;
+        await textEndGame('Muaahahaha you are done.');
         return handlerInput
             .responseBuilder
             .speak(speakOutput)
