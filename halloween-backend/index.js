@@ -87,7 +87,7 @@ const TrickOrTreatIntentHandler = {
         const trickOrTreat = getTrickOrTreat(remainingTricksAndTreats.tricks, remainingTricksAndTreats.treats);
 
         if (!trickOrTreat.value) {
-            const speakOutput = `Congratulations you’ve all survived the game with a portion of your soul intact! See in hell...`;
+            const speakOutput = `I've run out of tricks. Congratulations you’ve all survived the game with a portion of your soul intact! See you in hell...`;
             return handlerInput
                 .responseBuilder
                 .speak(speakOutput)
