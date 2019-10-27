@@ -47,7 +47,7 @@ const useBucket = () => {
     const uploadToBucket = () => {  
         let uploadParams = {
             Bucket: "htm-trick-or-treat",
-            Key: "trickOrTreatsTest.json",
+            Key: "trickOrTreat.json",
             Body: JSON.stringify(dataToSend),
             ContentType: 'application/json'
         }    

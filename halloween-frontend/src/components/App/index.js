@@ -7,7 +7,7 @@ function App() {
   const [playerName, setPlayerName] = useState('')
   const [playerNumber, setPlayerNumber] = useState('')
   const [trickOrTreat, setTrickOrTreat] = useState('')
-  const [type, setType]= useState('trick')
+  const [type, setType]= useState('tricks')
 
 
   const addPlayer = () => {
