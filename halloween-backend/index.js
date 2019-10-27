@@ -2,8 +2,25 @@
 // Please visit https://alexa.design/cookbook for additional examples on implementing slots, dialog management,
 // session persistence, api calls, and more.
 const Alexa = require("ask-sdk-core");
-const { getTrickOrTreat, initTrickOrTreat } = require("./trickOrTreat.js");
+var AWS = require('aws-sdk');
+var s3 = new AWS.S3();
+const { getTrickOrTreat } = require("./trickOrTreat.js");
 const maxNumberOfShards = 2;
+
+function getData() {
+    return new Promise((resolve, reject) => {
+        s3.getObject({
+        Bucket: "htm-trick-or-treat",
+        Key: "trickOrTreat.json"
+    }, function (err, data) {
+        if (err) {
+            reject(err)
+        } else {
+            resolve(JSON.parse(data.Body))
+        }
+    });
+    })
+}
 
 const LaunchRequestHandler = {
     canHandle(handlerInput) {
@@ -13,7 +30,8 @@ const LaunchRequestHandler = {
     },
     handle(handlerInput) {
         // const speakOutput = `Welcome to trick or treat. <audio src="soundbank://soundlibrary/human/amzn_sfx_laughter_giggle_01"/> How many players are entering the spook zone?`;
-        const speakOutput = 'yo'
+        const speakOutput = `yo`
+        
         return (
             handlerInput.responseBuilder
                 .speak(speakOutput)
@@ -30,7 +48,7 @@ const NumberOfPlayerIntentHandler = {
             Alexa.getIntentName(handlerInput.requestEnvelope) === "numberOfPlayersIntent"
         );
     },
-    handle(handlerInput) {
+    async handle(handlerInput) {
 
         const slot = Alexa.getSlotValue(handlerInput.requestEnvelope, 'number')
 
@@ -41,13 +59,13 @@ const NumberOfPlayerIntentHandler = {
         for (let i = 0; i < slot; i++) {
             playerShardsRemaining.push(maxNumberOfShards);
         }
-
+        const data = await getData()
         const sessionAttributes = {};
         Object.assign(sessionAttributes, {
             numberOfPlayers: slot,
             currentPlayer: 1,
             playerShardsRemaining,
-            remainingTricksAndTreats: initTrickOrTreat()
+            remainingTricksAndTreats: data.tricksAndTreats
         });
 
         handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
