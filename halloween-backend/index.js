@@ -29,8 +29,8 @@ const LaunchRequestHandler = {
         );
     },
     handle(handlerInput) {
-        // const speakOutput = `Welcome to trick or treat. <audio src="soundbank://soundlibrary/human/amzn_sfx_laughter_giggle_01"/> How many players are entering the spook zone?`;
-        const speakOutput = `yo`
+        const speakOutput = `Welcome to trick or treat. <audio src="soundbank://soundlibrary/human/amzn_sfx_laughter_giggle_01"/> How many players are entering the spook zone?`;
+        //const speakOutput = `yo`
         
         return (
             handlerInput.responseBuilder
@@ -52,9 +52,7 @@ const NumberOfPlayerIntentHandler = {
 
         const slot = Alexa.getSlotValue(handlerInput.requestEnvelope, 'number')
 
-        // const speakOutput = `Prepare for a fright. <audio src="soundbank://soundlibrary/monsters/pigmy_bats/pigmy_bats_09"/> There is no turning back.`;
-
-        const speakOutput = `ok, lets begin.`;
+        const speakOutput = `Fools! Prepare for a fearful night. <audio src="soundbank://soundlibrary/monsters/pigmy_bats/pigmy_bats_09"/> There is no turning back now. To find out your fate, say “Trick or treat”. Player 1 let me know when you're ready.`;
         const playerShardsRemaining = [];
         for (let i = 0; i < slot; i++) {
             playerShardsRemaining.push(maxNumberOfShards);
@@ -95,8 +93,10 @@ const TrickOrTreatIntentHandler = {
                 .speak(speakOutput)
                 .getResponse()
         }
+        
+        const audioClip = trickOrTreat.type === 'treat' ? `<audio src="soundbank://soundlibrary/animals/amzn_sfx_cat_purr_01"/>` : `<audio src="soundbank://soundlibrary/animals/amzn_sfx_cat_angry_meow_1x_01"/>`;
 
-        const speakOutput = `${trickOrTreat.type}!! ${trickOrTreat.value}. Do you accept your fate?`
+        const speakOutput = `${trickOrTreat.type}!! ${audioClip} ${trickOrTreat.value}. Do you accept your fate?`
         if (trickOrTreat.type === "trick") {
             remainingTricksAndTreats.tricks = remainingTricksAndTreats.tricks.filter(elem => elem !== trickOrTreat.value)
         } else {
